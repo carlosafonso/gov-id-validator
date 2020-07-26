@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Gov ID validator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="bulma.min.css">
+</head>
+<body>
+	<section class="section">
+		<div class="container">
+			<h3 class="title is-3">AI-based, government ID-assisted, mega-hyped user sign-up validation</h3>
+			<p>Use this form to simulate a user sign-up operation in which some proof of identity is being validated, in this case a goverment-issued ID document or card.</p>
+		</div>
+	</section>
+	<section class="section">
+		<div class="container">
+			<div class="columns">
+				<div class="column">
+					<div class="box">
+						<form id="form">
+							<div class="field">
+								<label for="" class="label">Card photo</label>
+								<div class="file has-name is-fullwidth">
+									<label class="file-label">
+										<input class="file-input" type="file" id="GovIdCardPicture" name="GovIdCardPicture">
+										<span class="file-cta">
+											<!-- <span class="file-icon">
+												<i class="fas fa-upload"></i>
+											</span> -->
+											<span class="file-label">
+												Choose a file…
+											</span>
+										</span>
+										<span class="file-name"></span>
+									</label>
+								</div>
+							</div>
+							<div class="field">
+								<label for="" class="label">Face photo</label>
+								<div class="file has-name is-fullwidth">
+									<label class="file-label">
+										<input class="file-input" type="file" id="FacePicture" name="FacePicture">
+										<span class="file-cta">
+											<!-- <span class="file-icon">
+												<i class="fas fa-upload"></i>
+											</span> -->
+											<span class="file-label">
+												Choose a file…
+											</span>
+										</span>
+										<span class="file-name"></span>
+									</label>
+								</div>
+							</div>
+							<hr/>
+							<div class="field">
+								<label class="label" for="FirstName">First name</label>
+								<div class="control">
+									<input class="input" type="text" id="FirstName">
+								</div>
+							</div>
+							<div class="field">
+								<label class="label" for="LastName">Last name</label>
+								<div class="control">
+									<input class="input" type="text" id="LastName">
+								</div>
+							</div>
+							<div class="field">
+								<label class="label" for="Id">Document ID</label>
+								<div class="control">
+									<input class="input" type="text" id="Id">
+								</div>
+							</div>
+							<hr/>
+							<div class="field is-grouped">
+								<div class="control">
+									<input type="submit" class="button is-link" value="Submit">
+								</div>
+							</div>
+							<input class="input" type="hidden" id="Bucket">
+							<input class="input" type="hidden" id="GovIdCardPictureKey">
+							<input class="input" type="hidden" id="FacePictureKey">
+						</form>
+					</div>
+				</div>
+				<div class="column">
+					<div class="box">
+						<h4 class="title is-4">Debug</h2>
+						<pre id="debug"></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer class="footer">
+		<div class="content has-text-centered">
+			<p>&copy; 2020 Amazon Web Services. Brought to you by the <strong>AWS Iberia Solutions Architecture</strong> team.</p>
+		</div>
+	</footer>
+	<script
+ 		src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  		crossorigin="anonymous"></script>
+	<script src="index.js"></script>
+</body>
+</html>

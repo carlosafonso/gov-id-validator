@@ -1,0 +1,96 @@
+{
+  "StartAt": "ValidateDoc",
+  "States": {
+    "ValidateDoc": {
+      "Type": "Task",
+      "Resource": "${IsValidDocFunctionArn}",
+      "Parameters": {
+          "Bucket.$": "$.Bucket",
+          "Key.$": "$.GovIdCardPictureKey"
+      },
+      "ResultPath": "$.IsValid",
+      "Next": "IsValidDoc"
+    },
+    "IsValidDoc": {
+        "Type": "Choice",
+        "Choices": [
+            {
+                "Variable": "$.IsValid",
+                "BooleanEquals": true,
+                "Next": "MatchTextAndFace"
+            }
+        ],
+        "Default": "DocIsInvalid"
+    },
+    "MatchTextAndFace": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "MatchText",
+          "States": {
+            "MatchText": {
+              "Type": "Task",
+              "Resource": "${MatchTextFunctionArn}",
+              "Parameters": {
+                  "Bucket.$": "$.Bucket",
+                  "GovIdCardPictureKey.$": "$.GovIdCardPictureKey",
+                  "GovIdCardData.$": "$.GovIdCardData"
+              },
+              "ResultPath": "$.TextMatches",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "MatchFace",
+          "States": {
+            "MatchFace": {
+              "Type": "Task",
+              "Resource": "${MatchFaceFunctionArn}",
+              "Parameters": {
+                  "Bucket.$": "$.Bucket",
+                  "GovIdCardPictureKey.$": "$.GovIdCardPictureKey",
+                  "FacePictureKey.$": "$.FacePictureKey"
+              },
+              "ResultPath": "$.FaceMatches",
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "DoTextAndFaceMatch"
+    },
+    "DoTextAndFaceMatch": {
+        "Type": "Choice",
+        "Choices": [
+            {
+                "Or": [
+                    {
+                        "Variable": "$[0].TextMatches",
+                        "BooleanEquals": false
+                    },
+                    {
+                        "Variable": "$[1].FaceMatches",
+                        "BooleanEquals": false
+                    }
+                ],
+                "Next": "TextOrFaceMismatch"
+            }
+        ],
+        "Default": "TextAndFaceMatch"
+    },
+    "DocIsInvalid": {
+        "Type": "Fail",
+        "Error": "DocumentNotAGovId",
+        "Cause": "Document does not appear to be a goverment ID"
+    },
+    "TextAndFaceMatch": {
+        "Type": "Succeed"
+    },
+    "TextOrFaceMismatch": {
+        "Type": "Fail",
+        "Error": "TextOrFaceMismatch",
+        "Cause": "Either the text or the face do not match those in the goverment ID"
+    }
+  }
+}

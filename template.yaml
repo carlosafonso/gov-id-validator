@@ -1,0 +1,102 @@
+Description: This template deploys a stack with the government ID validation demo, which leverages Serverless services and Rekognition Custom Labels.
+
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    CodeUri: functions
+    Runtime: python3.7
+    Timeout: 60
+  Api:
+    EndpointConfiguration: REGIONAL
+
+Parameters:
+  CustomLabelsProjectVersionArn:
+    Description: The ARN of the Rekognition Custom Labels project
+    Type: String
+
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 1
+            Status: Enabled
+
+  ApiHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.lambda_handler
+      Environment:
+        Variables:
+          UPLOADS_BUCKET_NAME: !Ref UploadsBucket
+          STATE_MACHINE_ARN: 'PleaseReplaceMe'
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref UploadsBucket
+      Events:
+        UploadUrlsApi:
+          Type: HttpApi
+          Properties:
+            Method: get
+            Path: /upload_urls
+        ValidationJobsApi:
+          Type: HttpApi
+          Properties:
+            Method: any
+            Path: /validation_jobs
+
+  IsValidDocFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: is_valid_doc.lambda_handler
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            Effect: 'Allow'
+            Action: 'rekognition:*'
+            Resource: '*'
+      Environment:
+        Variables:
+          CUSTOM_LABELS_PROJECT_VERSION_ARN: !Ref CustomLabelsProjectVersionArn
+
+  MatchTextFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: match_text.lambda_handler
+      Policies:
+        - RekognitionDetectOnlyPolicy: {}
+
+  MatchFaceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: match_face.lambda_handler
+      Policies:
+        - RekognitionFacesPolicy: {}
+
+  StateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionSubstitutions:
+        IsValidDocFunctionArn: !GetAtt IsValidDocFunction.Arn
+        MatchTextFunctionArn: !GetAtt MatchTextFunction.Arn
+        MatchFaceFunctionArn: !GetAtt MatchFaceFunction.Arn
+      DefinitionUri: ./state-machine.json
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref IsValidDocFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref MatchTextFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref MatchFaceFunction
+
+Outputs:
+  WebsiteUrl:
+    Value: !GetAtt WebsiteBucket.WebsiteURL

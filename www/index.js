@@ -20,7 +20,7 @@ let createValidationJob = (data) => {
 				contentType: 'application/json',
 				data: JSON.stringify(data),
 				success: (data) => {
-					resolve(data);
+					resolve(JSON.parse(data));
 				},
 				error: (e) => {
 					log('Request failed!');
@@ -43,7 +43,7 @@ let getExecutionStatus = (arn) => {
 					executionArn: arn
 				},
 				success: (data) => {
-					resolve(data);
+					resolve(JSON.parse(data));
 				},
 				error: (e) => {
 					reject(e);

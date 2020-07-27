@@ -25,6 +25,16 @@ Resources:
   UploadsBucket:
     Type: AWS::S3::Bucket
     Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - 'GET'
+              - 'POST'
+            AllowedOrigins:
+              - '*'
+            MaxAge: 3000
       LifecycleConfiguration:
         Rules:
           - ExpirationInDays: 1

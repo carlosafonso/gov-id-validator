@@ -1,6 +1,6 @@
 'use strict';
 
-const ENDPOINT_URL = 'https://akxdricpcf.execute-api.eu-west-1.amazonaws.com';
+const ENDPOINT_URL = 'https://909dn31ei0.execute-api.eu-west-1.amazonaws.com';
 
 let clearLog = () => {
 	$('#debug').html('');

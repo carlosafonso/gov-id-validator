@@ -47,10 +47,17 @@ Resources:
       Environment:
         Variables:
           UPLOADS_BUCKET_NAME: !Ref UploadsBucket
-          STATE_MACHINE_ARN: 'PleaseReplaceMe'
+          STATE_MACHINE_ARN: !Ref StateMachine
       Policies:
         - S3FullAccessPolicy:
             BucketName: !Ref UploadsBucket
+        - StepFunctionsExecutionPolicy:
+            StateMachineName: !GetAtt StateMachine.Name
+        - Version: '2012-10-17'
+          Statement:
+            Effect: 'Allow'
+            Action: 'states:DescribeExecution'
+            Resource: '*'
       Events:
         UploadUrlsApi:
           Type: HttpApi

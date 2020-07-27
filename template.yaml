@@ -9,6 +9,16 @@ Globals:
     Timeout: 60
   Api:
     EndpointConfiguration: REGIONAL
+  HttpApi:
+    CorsConfiguration:
+      AllowOrigins:
+        - '*'
+      AllowHeaders:
+        - '*'
+      AllowMethods:
+        - 'GET'
+        - 'POST'
+        - 'OPTIONS'
 
 Parameters:
   CustomLabelsProjectVersionArn:

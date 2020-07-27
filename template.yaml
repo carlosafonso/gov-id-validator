@@ -75,6 +75,8 @@ Resources:
     Properties:
       Handler: is_valid_doc.lambda_handler
       Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref UploadsBucket
         - Version: '2012-10-17'
           Statement:
             Effect: 'Allow'

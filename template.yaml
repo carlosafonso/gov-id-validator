@@ -91,6 +91,8 @@ Resources:
     Properties:
       Handler: match_text.lambda_handler
       Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref UploadsBucket
         - RekognitionDetectOnlyPolicy: {}
 
   MatchFaceFunction:
@@ -98,6 +100,8 @@ Resources:
     Properties:
       Handler: match_face.lambda_handler
       Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref UploadsBucket
         - RekognitionFacesPolicy: {}
 
   StateMachine:
